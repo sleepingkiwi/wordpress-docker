@@ -1,0 +1,51 @@
+version: '3.3'
+
+services:
+  db:
+    image: mysql:5.7
+    # makes database data persist - this is a NAMED volume (not path based)
+    # and is handled invisibly by Docker
+    # we generally don't need to sync local DB contents to vc...
+    # but if we did we could make this path based: ./db_data
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: sleepingkiwi
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+  wordpress:
+    # links this service to the db we just started!
+    depends_on:
+      - db
+    # latest WP version used whenever we run `docker-compose up`
+    # can tie to a specific version if the project needs it
+    image: wordpress:latest
+    ports:
+      - "8000:80"
+    # maps the wp-content directory to our local file system using a PATH BASED volume
+    # means we can add as much or as little of wp-content to vc as we want!
+    volumes:
+      - ./wp-content/:/var/www/html/wp-content
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+
+  # start phpmyadmin - not needed but useful for making Database dumps etc.
+  # can comment out if not required!
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    ports:
+      - "8001:80"
+    restart: always
+    environment:
+      PMA_HOST: db
+
+volumes:
+  db_data: {}
