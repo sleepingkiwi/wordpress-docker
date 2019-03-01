@@ -23,9 +23,7 @@ services:
     # latest WP version used whenever we run `docker-compose up`
     # can tie to a specific version if the project needs it
     # ref: https://hub.docker.com/_/wordpress/
-    # image: wordpress:latest
-    # now loaded in the dockerfile...
-    build: .
+    image: wordpress:latest
     ports:
       - "8000:80"
     # maps the wp-content directory to our local file system using a PATH BASED volume
