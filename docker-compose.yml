@@ -32,6 +32,8 @@ services:
     # means we can add as much or as little of wp-content to vc as we want!
     volumes:
       - ./wp-content/:/var/www/html/wp-content
+      # links to our local uploads.ini to control uploads etc.
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     restart: always
     # the extra config let's us edit things without being asked for FTP credentials...
     environment:
