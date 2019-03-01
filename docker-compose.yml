@@ -22,7 +22,10 @@ services:
       - db
     # latest WP version used whenever we run `docker-compose up`
     # can tie to a specific version if the project needs it
-    image: wordpress:latest
+    # ref: https://hub.docker.com/_/wordpress/
+    # image: wordpress:latest
+    # now loaded in the dockerfile...
+    build: .
     ports:
       - "8000:80"
     # maps the wp-content directory to our local file system using a PATH BASED volume
@@ -30,10 +33,12 @@ services:
     volumes:
       - ./wp-content/:/var/www/html/wp-content
     restart: always
+    # the extra config let's us edit things without being asked for FTP credentials...
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_CONFIG_EXTRA: define('FS_METHOD', 'direct');
 
   # start phpmyadmin - not needed but useful for making Database dumps etc.
   # can comment out if not required!
