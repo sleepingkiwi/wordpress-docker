@@ -31,6 +31,11 @@ docker exec -it <wordpress-container-name> bash
 mkdir /var/www/html/wp-content/plugins
 mkdir /var/www/html/wp-content/uploads
 chown -R www-data:www-data /var/www
-find /var/www/ -type d -exec chmod 0755 {} \
-find /var/www/ -type f -exec chmod 644 {} \
+find /var/www/ -type d -exec chmod 0755 {} \;
+find /var/www/ -type f -exec chmod 644 {} \;
+
+# make the shared dir/s editable on host system
+# 🤡 pls don't deploy this - it's for local use...
+find /var/www/html/wp-content/ -type d -exec chmod 0777 {} \;
+find /var/www/html/wp-content/ -type f -exec chmod 666 {} \;
 ```
