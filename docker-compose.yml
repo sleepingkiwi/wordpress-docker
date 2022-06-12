@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   db:
-    image: mysql:5.7
+    image: mysql:latest
     # makes database data persist - this is a NAMED volume (not path based)
     # and is handled invisibly by Docker
     # we generally don't need to sync local DB contents to vc...
@@ -39,6 +39,9 @@ services:
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_CONFIG_EXTRA: define('FS_METHOD', 'direct');
+      # we can check this in our php
+      # https://developer.wordpress.org/reference/functions/wp_get_environment_type/
+      WP_ENVIRONMENT_TYPE: local
 
   # start phpmyadmin - not needed but useful for making Database dumps etc.
   # can comment out if not required!
