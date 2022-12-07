@@ -65,6 +65,8 @@ just replace all instances of _example-site.local_ in `proxy/conf/default-ssl.co
 
 We need to copy the images `docker-entrypoint.sh` file and add a few lines to the end...
 
+First we need to bring the docker image up with `docker-compose up`
+
 ``` bash
 # from the root project directory
 # get [IMAGENAME] from `docker ps`
@@ -80,6 +82,8 @@ service apache2 restart
 service apache2 stop
 exec "$@"
 ```
+
+Uncomment the `# - ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh` line from docker-compose and bring it down/up
 
 ## permissions
 

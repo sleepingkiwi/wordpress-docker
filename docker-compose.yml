@@ -35,7 +35,7 @@ services:
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
       - ./proxy/conf/default-ssl.conf:/etc/apache2/sites-available/default-ssl.conf
       - ./proxy/certs:/etc/ssl/certs
-      - ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
+      # - ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
     restart: always
     environment:
       WORDPRESS_DB_HOST: db:3306
