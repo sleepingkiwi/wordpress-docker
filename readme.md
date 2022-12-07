@@ -27,7 +27,7 @@ If you are running lots of these images then the ports on localhost will conflic
 
 ``` bash
 # on local machine (not the Docker Image)
-sudo nano /etc/bash
+sudo nano /etc/hosts
 # add line like:
 # 127.0.0.1 example-site.local
 ```
