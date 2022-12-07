@@ -25,13 +25,17 @@ services:
     # ref: https://hub.docker.com/_/wordpress/
     image: wordpress:latest
     ports:
-      - "8000:80"
+      - 443:443
+      - "8310:80"
     # maps the wp-content directory to our local file system using a PATH BASED volume
     # means we can add as much or as little of wp-content to vc as we want!
     volumes:
       - ./wp-content/:/var/www/html/wp-content
       # links to our local uploads.ini to control uploads etc.
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./proxy/conf/default-ssl.conf:/etc/apache2/sites-available/default-ssl.conf
+      - ./proxy/certs:/etc/ssl/certs
+      - ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
     restart: always
     environment:
       WORDPRESS_DB_HOST: db:3306
@@ -51,7 +55,7 @@ services:
     depends_on:
       - db
     ports:
-      - "8001:80"
+      - "8311:80"
     restart: always
     environment:
       PMA_HOST: db
