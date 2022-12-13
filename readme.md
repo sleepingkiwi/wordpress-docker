@@ -9,6 +9,8 @@ a starting point for local WordPress installs.
 
 runs the latest WP version by default and links wp-content directory to a local version - in there is where you can add project code or create a git repo etc.
 
+Requires our [nginx-proxy](https://github.com/sleepingkiwi/nginx-proxy-docker) container to be running for the ssl functionality etc.
+
 ## usage
 
 - put it in to a directory
@@ -19,7 +21,7 @@ See below for specifics
 
 ## Set unique ports
 
-If you are running lots of these images then the ports on localhost will conflict so it makes sense to keep them separate. You can update `docker-compose.yml`, specifically the `ports:` sections to ensure there are no conflicts!
+If you are running lots of these images then the ports for phpmyadmin on localhost will conflict so it makes sense to keep them separate. You can update `docker-compose.yml`, specifically the `ports:` sections to ensure there are no conflicts!
 
 ## local domain name and ssl certs for dev
 
@@ -32,7 +34,9 @@ sudo nano /etc/hosts
 # 127.0.0.1 example-site.local
 ```
 
-Now you should be able to access your image (when it's running) on `http://example-site.local:PORT`
+Now you also need to add your local URL under VIRTUAL_HOST: for the WordPress image. Replace `example-site.local` with the name you just added to /etc/hosts
+
+Now if you run docker-compose up (and the proxy is running) you should be able to access your image (when it's running) on `http://example-site.local`
 
 ### Set up an ssl cert for that local domain
 
@@ -48,42 +52,14 @@ _You only need to do this step once_ - if you already have one then you don't ne
 
 > If yoy already have a local CA set up:
 
-#### Make self signed SSL certs for your local domain
+#### Make self signed SSL certs for your local domain and give them to local proxy
+
+These need to go into the `./certs` directory at the root of your local [nginx-proxy](https://github.com/sleepingkiwi/nginx-proxy-docker) (should be `~/dev/nginx-proxy/certs`)
 
 ``` bash
-# cd into the proxy/certs dir at the root of this repo
+# cd into the /certs dir at the root of the nginx-proxy dir (should be ~/dev/nginx-proxy/certs)
 mkcert -cert-file example-site.local.crt -key-file example-site.local.key example-site.local
 ```
-
-#### change the proxy file to point to your new domain
-
-just replace all instances of _example-site.local_ in `proxy/conf/default-ssl.conf` with the local domain for your site.
-
-#### enable ssl on apache for every run
-
-> This is a horrible way to do this really - is there a better (less manual) way?
-
-We need to copy the images `docker-entrypoint.sh` file and add a few lines to the end...
-
-First we need to bring the docker image up with `docker-compose up`
-
-``` bash
-# from the root project directory
-# get [IMAGENAME] from `docker ps`
-docker cp [IMAGENAME]_wordpress_1:/usr/local/bin/docker-entrypoint.sh .
-```
-
-replace the last line of the `docker-entrypoint.sh` file with
-
-``` sh
-a2enmod ssl
-a2ensite default-ssl
-service apache2 restart
-service apache2 stop
-exec "$@"
-```
-
-Uncomment the `# - ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh` line from docker-compose and bring it down/up
 
 ## permissions
 
