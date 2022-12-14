@@ -1,14 +1,14 @@
 version: '3.3'
 
 services:
-  db:
+  db_example_site:
     image: mysql:latest
     # makes database data persist - this is a NAMED volume (not path based)
     # and is handled invisibly by Docker
     # we generally don't need to sync local DB contents to vc...
     # but if we did we could make this path based: ./db_data
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data_example_site:/var/lib/mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: sleepingkiwi
@@ -16,10 +16,10 @@ services:
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: wordpress
 
-  wordpress:
+  wordpress_example_site:
     # links this service to the db we just started!
     depends_on:
-      - db
+      - db_example_site
     # latest WP version used whenever we run `docker-compose up`
     # can tie to a specific version if the project needs it
     # ref: https://hub.docker.com/_/wordpress/
@@ -36,7 +36,7 @@ services:
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     restart: unless-stopped
     environment:
-      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_HOST: db_example_site:3306
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       # the FS_METHOD config let's us edit things without being asked for FTP credentials...
@@ -51,18 +51,19 @@ services:
 
   # start phpmyadmin - not needed but useful for making Database dumps etc.
   # can comment out if not required!
-  phpmyadmin:
+  phpmyadmin_example_site:
     image: phpmyadmin/phpmyadmin
     depends_on:
-      - db
-    ports:
-      - "8001:80"
+      - db_example_site
+    # ports:
+    #   - "8000:80"
     restart: unless-stopped
     environment:
-      PMA_HOST: db
+      PMA_HOST: db_example_site
+      VIRTUAL_HOST: db.example-site.local
 
 volumes:
-  db_data: {}
+  db_data_example_site: {}
 
 # get on our local dev network!
 networks:
