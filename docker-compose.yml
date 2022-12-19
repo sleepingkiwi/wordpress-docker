@@ -61,6 +61,7 @@ services:
     environment:
       PMA_HOST: db_example_site
       VIRTUAL_HOST: db.example-site.local
+      UPLOAD_LIMIT: 500M
 
 volumes:
   db_data_example_site: {}
