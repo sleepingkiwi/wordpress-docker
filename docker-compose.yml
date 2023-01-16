@@ -52,7 +52,7 @@ services:
   # start phpmyadmin - not needed but useful for making Database dumps etc.
   # can comment out if not required!
   phpmyadmin_example_site:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin
     depends_on:
       - db_example_site
     # ports:
