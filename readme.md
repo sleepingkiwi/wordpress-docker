@@ -7,25 +7,30 @@
 
 a starting point for local WordPress installs.
 
-runs the latest WP version by default and links wp-content directory to a local version - in there is where you can add project code or create a git repo etc.
+used extensively on macos, untested but should(?) mostly work under linux/WSL.
+
+runs the latest WP version by default and links `wp-content` directory to a local version - where you can add project code or create a git repo etc.
+
+contains configuration and settings to run xdebug on the local machine.
 
 Requires our [nginx-proxy](https://github.com/sleepingkiwi/nginx-proxy-docker) container to be running for the ssl functionality etc.
 
 ## usage
 
 - put it in to a directory
-- run `docker-compose up` or `docker-compose up -d` (`docker-compose stop` to stop that one)
+- run `docker-compose up` to run in the terminal
+- or `docker-compose up -d` to run in the background (`docker-compose stop` to stop that one)
 - run `docker-compose down` to clean up everything that hasn't been saved to a volume specified in `docker-compose.yml`
 
 See below for specifics
 
 ## Rename volumes and services
 
-Because we now run these images on a shared network we would run in to issues with the same db service being shared by multiple containers.
+Because we run these images on a shared network we would run in to issues with the same db service being shared by multiple containers.
 
 To resolve this we give each service it's own name keyed to the current project
 
-Find and replace `example_site` with `your_site_name`
+Find and replace `example_site` with `your_site_name` in `docker-compose.yml`
 
 ## local domain name and ssl certs for dev
 
@@ -39,13 +44,13 @@ sudo nano /etc/hosts
 # 127.0.0.1 db.example-site.local
 ```
 
-Now you also need to add your local URL under VIRTUAL_HOST: for the WordPress and database images. Replace `example-site.local` in both places with the name you just added to /etc/hosts
+Now you also need to add your local URL under VIRTUAL_HOST: for the WordPress and database images . Replace `example-site.local` in both places (in `docker-compose.yml`) with the name you just added to /etc/hosts
 
 Now if you run docker-compose up (and the proxy is running) you should be able to access your image (when it's running) on `http://example-site.local` and phpmyadmin for the database at `http://db.example-site.local`
 
 ### Set up an ssl cert for that local domain
 
-> If this is the first time setting up a cert:
+> 👋 If this is the first time setting up a cert:
 
 #### Set up a local Cerificate Authority (CA)
 
@@ -55,7 +60,7 @@ _You only need to do this step once_ - if you already have one then you don't ne
   - on macos that's `brew install mkcert` and `brew install nss`
 - run `mkcert -install`
 
-> If yoy already have a local CA set up:
+> 👋 If you already have a local CA set up:
 
 #### Make self signed SSL certs for your local domain and give them to local proxy
 
@@ -67,11 +72,17 @@ mkcert -cert-file example-site.local.crt -key-file example-site.local.key exampl
 mkcert -cert-file db.example-site.local.crt -key-file db.example-site.local.key db.example-site.local
 ```
 
-## permissions
+## Using xdebug
 
-on first run you might get errors trying to install new plugins etc.
+If you have the [PHP Debug](https://marketplace.visualstudio.com/items?itemName=xdebug.php-debug) extension installed then the launch.json inside the `.vscode` dir in this repo should just work!
 
-if you do you can run the following commands.
+In vscode if you `view > run` and choose `listen for xdebug` from the dropdown in the _run and debug_ panel then vscode will automatically detect errors/breakpoints in your running code.
+
+👋 This repo contains a `launch.json` file that works well if you have vscode open from the very root of your project (i.e. the directory containing `docker-compose.yml`).
+
+If you just have a specific plugin/theme open in your workspace you will need to tweak the launch.json file at the root of that directory so that xdebug knows where to locate files!
+
+## changing permissions or editing files in the running container
 
 > If you need to find the container name use `docker ps` whilst it's running
 
@@ -79,6 +90,8 @@ if you do you can run the following commands.
 # whilst the container is running
 docker exec -it <wordpress-container-name> bash
 
+# changing permissions example
+# you shouldn't normally have to do this!
 # create missing dirs and give yourself some rights
 mkdir /var/www/html/wp-content/plugins
 mkdir /var/www/html/wp-content/uploads
