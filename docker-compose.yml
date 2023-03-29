@@ -23,7 +23,9 @@ services:
     # latest WP version used whenever we run `docker-compose up`
     # can tie to a specific version if the project needs it
     # ref: https://hub.docker.com/_/wordpress/
-    image: wordpress:latest
+    build:
+      context: ./wordpress
+      dockerfile: Dockerfile
     # not used if we're connecting through our local proxy
     # ports:
       # - 443:443
@@ -32,8 +34,15 @@ services:
     # means we can add as much or as little of wp-content to vc as we want!
     volumes:
       - ./wp-content/:/var/www/html/wp-content
+      # this puts basically the whole of the WP install in our local file system
+      # useful to step through with xdebug but not necessary at all if you'd rather not!
+      - ./wp-includes/:/var/www/html/wp-includes
+      - ./wp-admin/:/var/www/html/wp-admin
       # links to our local uploads.ini to control uploads etc.
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      # link config files for xdebug
+      - ./xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      - ./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
     restart: unless-stopped
     environment:
       WORDPRESS_DB_HOST: db_example_site:3306

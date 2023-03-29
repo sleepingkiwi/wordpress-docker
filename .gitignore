@@ -49,3 +49,10 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+/wp-content
+
+# we normally don't want to add this to VC but it's useful here
+# because it contains our debug config!
+# manually enabling .vscode even though we normally ignore it globally
+!.vscode
