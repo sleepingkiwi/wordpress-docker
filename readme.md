@@ -84,7 +84,7 @@ If you just have a specific plugin/theme open in your workspace you will need to
 
 ## changing permissions or editing files in the running container
 
-> If you need to find the container name use `docker ps` whilst it's running
+> If you need to find the container name use `docker ps` whilst it's running and check the `name` column
 
 ``` bash
 # whilst the container is running
@@ -103,4 +103,33 @@ find /var/www/ -type f -exec chmod 644 {} \;
 # 🤡 pls don't deploy this - it's for local use...
 find /var/www/html/wp-content/ -type d -exec chmod 0777 {} \;
 find /var/www/html/wp-content/ -type f -exec chmod 666 {} \;
+```
+
+## installing and using WP-CLI
+
+To add and use WP-CLI in a running container we can just install it as normal using an interactive bash session on the running Docker container.
+
+> If you need to find the current container's name use `docker ps` whilst it's running and check the `name` column
+
+Reference for standard WP-CLI install can be found at: [wp-cli.org](https://wp-cli.org/)
+
+``` bash
+# whilst the container is running
+docker exec -it <wordpress-container-name> bash
+
+# change to our user dir
+cd
+
+# pull down the CLI .phar
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+# check that it works!
+php wp-cli.phar --info
+
+# make it executable and move it into the path so that we can just run `wp --info`
+chmod +x wp-cli.phar
+sudo mv wp-cli.phar /usr/local/bin/wp
+
+# check that it (still) works!
+wp --info
 ```
