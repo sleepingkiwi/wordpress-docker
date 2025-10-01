@@ -24,6 +24,16 @@ Requires our [nginx-proxy](https://github.com/sleepingkiwi/nginx-proxy-docker) c
 
 See below for specifics
 
+## updating the wordpress image
+
+If you want to make sure you have the latest WP image before running commands
+
+`docker image pull wordpress:latest`
+
+To rebuild the wordpress service (for example) for a previously running container:
+
+`docker-compose up --build -d wordpress_example_site`
+
 ## Rename volumes and services
 
 Because we run these images on a shared network we would run in to issues with the same db service being shared by multiple containers.
